@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.Date;
+import java.util.Random;
 
 /**
  */
@@ -20,12 +21,19 @@ public class Gol implements Runnable {
     private static long PROTECTED_CELL_TRESH = 500;
 
     private long lastProtectedCell = 0;
+    private boolean deleteMode = false;
+
+    private Random random = new Random();
+
+    private Color[] colors = new Color[] {
+        Color.orange,
+        Color.red,
+        Color.black,
+        Color.green
+    };
 
     private int delay = 1;
     private final DrawPanel drawPanel;
-
-    private int gapDiffX;
-    private int gapDiffY;
 
     private int gapSizeX;
     private int gapSizeY;
@@ -93,9 +101,6 @@ public class Gol implements Runnable {
             if (gapSizeY < 0) {
                 gapSizeY = 1;
             }
-
-            gapDiffX = gapSizeX - oldGapX;
-            gapDiffY = gapSizeY - oldGapY;
 
             drawPanel.repaint();
         }
@@ -278,10 +283,17 @@ public class Gol implements Runnable {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
+            float rc = random.nextFloat();
+            float gc = random.nextFloat();
+            float bc = random.nextFloat();
+
+
+
             for (int i = 0; i < boardSizeX; i++) {
                 for (int j = 0; j < boardSizeY; j++) {
                     if (board[i][j] == 1) {
-                        g.setColor(Color.black);
+                        g.setColor(new Color(rc, gc, bc));
                     } else {
                         g.setColor(Color.white);
                     }
