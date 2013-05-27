@@ -1,3 +1,5 @@
+import sun.font.TrueTypeFont;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -21,7 +23,7 @@ public class Gol implements Runnable {
     private static long PROTECTED_CELL_TRESH = 500;
 
     private long lastProtectedCell = 0;
-    private boolean deleteMode = false;
+    private int deleteMode = 0;
 
     private Random random = new Random();
 
@@ -111,11 +113,16 @@ public class Gol implements Runnable {
             int i = x / gapSizeX;
             int j = y / gapSizeY;
             int b = board[i][j];
+
             if (b == 0) {
-                board[i][j] = 1;
+                if ( deleteMode >= 0 ) {
+                    board[i][j] = 1;
+                    deleteMode = 1;
+                }
             } else {
-                if ( (new Date().getTime() - PROTECTED_CELL_TRESH) > lastProtectedCell ) {
+                if (deleteMode <= 0) {
                     board[i][j] = 0;
+                    deleteMode = -1;
                 }
             }
             drawPanel.repaint();
@@ -125,6 +132,11 @@ public class Gol implements Runnable {
         @Override
         public void mouseDragged(MouseEvent e) {
             this.addPoint(e.getX(), e.getY());
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            deleteMode = 0;
         }
 
         @Override
@@ -284,14 +296,12 @@ public class Gol implements Runnable {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            float rc = random.nextFloat();
-            float gc = random.nextFloat();
-            float bc = random.nextFloat();
-
-
-
             for (int i = 0; i < boardSizeX; i++) {
                 for (int j = 0; j < boardSizeY; j++) {
+                    float rc = random.nextFloat();
+                    float gc = random.nextFloat();
+                    float bc = random.nextFloat();
+
                     if (board[i][j] == 1) {
                         g.setColor(new Color(rc, gc, bc));
                     } else {
